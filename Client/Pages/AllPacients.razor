@@ -1,0 +1,63 @@
+﻿@page "/Persons/AllPacients"
+@inject HttpClient _http /*se necesita para comunicarse con la api*/
+@inject NavigationManager _navigate
+<h3>AllPacients</h3>
+
+<button class="btn btn-primary" @onclick="redirect"><span class="oi oi-plus"></span>Add Pacient</button>
+
+@if (patients.Count > 0)
+{
+	<table class="table table-striped">
+		<thead>
+			<tr>
+				<th>Name</th>
+				<th>Date of birth</th>
+				<th>Address</th>
+				<th>Phone</th>
+				<th>Email</th>
+				<th>Actions</th>
+				<th></th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (Pacient patient in patients)
+			{
+				<tr>
+					<td>@patient.Nombre</td>
+					<td>@patient.Born</td>
+					<td>@patient.Domicilio</td>
+					<td>@patient.Phone</td>
+					<td>@patient.Correo</td>
+					<td><button class="btn" @onclick="(() => Edit(patient.Id))"><span class="oi oi-pencil"></span></button></td>
+					<td><button class="btn" @onclick="(() => Delete(patient.Id))"><span class="oi oi-trash"></span></button></td>
+				</tr>
+			}
+		</tbody>
+	</table>
+}
+@code {
+	private Pacient people = new();
+	private List<Pacient> patients = new();
+
+	private void Edit(int id)
+	{
+		_navigate.NavigateTo($"Persons/EditPatient/{id}");
+	}
+
+
+	private async void Delete(int id)
+	{
+		await _http.DeleteAsync($"api/Pacients/{id}");
+		var patient = patients!.Find(r => r.Id == id);
+		patients.Remove(patient!);
+		//_navigate.NavigateTo("Persons");
+		StateHasChanged();
+	}
+
+	private void redirect()
+	{
+		_navigate.NavigateTo("Persons");
+	}
+
+	protected override async Task OnInitializedAsync() => patients = await _http.GetFromJsonAsync<List<Pacient>>("api/Pacients");
+}
