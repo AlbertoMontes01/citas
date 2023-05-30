@@ -1,0 +1,76 @@
+﻿@page "/pacients"
+@using citas.Shared.Model
+@inject HttpClient http
+@inject NavigationManager navegar
+<h3>Lista de Pacientes</h3>
+<button class="btn btn-primary" @onclick="Agregar"><span class="oi oi-plus"></span> Nuevo paciente</button>
+
+@if (losPacientes == null)
+{
+    <h1>Cargando datos...</h1>
+}
+else if (losPacientes.Count == 0)
+{
+    <h1>No existen pacientes registrados</h1>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Nombre</th>
+                <th>FechaNacimiento</th>
+                <th>Domicilio</th>
+                <th>Phone</th>
+                <th>Correo</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var elpaciente in losPacientes)
+            {
+                <tr>
+                    <td>@elpaciente.Id</td>
+                    <td>@elpaciente.Nombre</td>
+                    <td>@elpaciente.Born</td>
+                    <td>@elpaciente.Domicilio</td>
+                    <td>@elpaciente.Phone</td>
+                    <td>@elpaciente.Correo</td>
+                    <td>
+                        <button class="btn-sm btn-primary" @onclick="(()=>Modificar(elpaciente.Id))"><span class="oi oi-pencil"></span></button>
+                        <button class="btn-sm btn-danger" @onclick="(()=>Eliminar(elpaciente))"><span class="oi oi-trash"></span></button>
+                    </td>
+
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+
+
+@code {
+    private List<Pacient> losPacientes;
+
+    protected override async Task OnInitializedAsync()
+    {
+        losPacientes = await http.GetFromJsonAsync<List<Pacient>>("api/pacientes");
+    }
+
+    private void Agregar()
+    {
+        navegar.NavigateTo("/pacients/nuevo");
+    }
+
+    private void Modificar(int id)
+    {
+        navegar.NavigateTo($"/pacients/editar/{id}");
+    }
+
+    private async Task Eliminar(Pacient unPaciente)
+    {
+        await http.DeleteAsync($"api/pacientes/{unPaciente.Id}");
+        losPacientes.Remove(unPaciente);
+    }
+}

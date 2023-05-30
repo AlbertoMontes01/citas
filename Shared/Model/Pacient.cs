@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -30,6 +31,8 @@ namespace citas.Shared.Model
         public int? Salario { get; set; }
         [Range(1,2, ErrorMessage ="Debes seleccionar un genero")]
         public int? Genero { get; set; }*/
+
+        public virtual ICollection<Appoitment>? Appoitments { get; set; }
 
     }
 }

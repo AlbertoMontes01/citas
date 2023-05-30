@@ -10,13 +10,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
-builder.Services.AddDbContext<PacientContext>(options => options
-.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-builder.Services.AddDbContext<DoctorContext>(options => options
-.UseSqlServer(builder.Configuration.GetConnectionString("DoctorConnection")));
-builder.Services.AddDbContext<AppointmentContext>(options => options
-.UseSqlServer(builder.Configuration.GetConnectionString("AppointmentConnection")));
-builder.Services.AddMvc().AddNewtonsoftJson(options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+
+builder.Services.AddDbContext<ClinicaContexto>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

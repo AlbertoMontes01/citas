@@ -1,0 +1,73 @@
+﻿@page "/doctors"
+@using citas.Shared.Model
+@inject HttpClient http
+@inject NavigationManager navegar
+<h3>Lista de doctores</h3>
+<button class="btn btn-primary" @onclick="Agregar"><span class="oi oi-plus"></span> Nuevo Doctor</button>
+@if (losClientes == null)
+{
+    <h1>Cargando datos...</h1>
+}
+else if (losClientes.Count == 0)
+{
+    <h1>No existen doctores registrados</h1>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Nombre</th>
+                <th>Speciality</th>
+                <th>Domicilio</th>
+                <th>Phone</th>
+                <th>Correo</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var elcliente in losClientes)
+            {
+                <tr>
+                    <td>@elcliente.Id</td>
+                    <td>@elcliente.Nombre</td>
+                    <td>@elcliente.Speciality</td>
+                    <td>@elcliente.Domicilio</td>
+                    <td>@elcliente.Phone</td>
+                    <td>@elcliente.Correo</td>
+                    <td>
+                        <button class="btn-sm btn-primary" @onclick="(()=>Modificar(elcliente.Id))"><span class="oi oi-pencil"></span></button>
+                        <button class="btn-sm btn-danger" @onclick="(()=>Eliminar(elcliente))"><span class="oi oi-trash"></span></button>
+                    </td>
+
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<Doctors> losClientes;
+
+    protected override async Task OnInitializedAsync()
+    {
+        losClientes = await http.GetFromJsonAsync<List<Doctors>>("api/doctores");
+    }
+
+    private void Agregar()
+    {
+        navegar.NavigateTo("/doctors/nuevo");
+    }
+
+    private void Modificar(int id)
+    {
+        navegar.NavigateTo($"/doctors/editar/{id}");
+    }
+
+    private async Task Eliminar(Doctors unCliente)
+    {
+        await http.DeleteAsync($"api/doctores/{unCliente.Id}");
+        losClientes.Remove(unCliente);
+    }
+}

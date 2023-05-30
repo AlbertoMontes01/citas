@@ -12,16 +12,16 @@ namespace citas.Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class DoctorsController : ControllerBase
+    public class DoctoresController : ControllerBase
     {
-        private readonly DoctorContext _context;
+        private readonly ClinicaContexto _context;
 
-        public DoctorsController(DoctorContext context)
+        public DoctoresController(ClinicaContexto context)
         {
             _context = context;
         }
 
-        // GET: api/Doctors
+        // GET: api/Doctores
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Doctors>>> GetDoctors()
         {
@@ -32,7 +32,7 @@ namespace citas.Server.Controllers
             return await _context.Doctors.ToListAsync();
         }
 
-        // GET: api/Doctors/5
+        // GET: api/Doctores/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Doctors>> GetDoctors(int id)
         {
@@ -50,7 +50,7 @@ namespace citas.Server.Controllers
             return doctors;
         }
 
-        // PUT: api/Doctors/5
+        // PUT: api/Doctores/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutDoctors(int id, Doctors doctors)
@@ -81,14 +81,14 @@ namespace citas.Server.Controllers
             return NoContent();
         }
 
-        // POST: api/Doctors
+        // POST: api/Doctores
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<Doctors>> PostDoctors(Doctors doctors)
         {
           if (_context.Doctors == null)
           {
-              return Problem("Entity set 'DoctorContext.Doctors'  is null.");
+              return Problem("Entity set 'ClinicaContexto.Doctors'  is null.");
           }
             _context.Doctors.Add(doctors);
             await _context.SaveChangesAsync();
@@ -96,7 +96,7 @@ namespace citas.Server.Controllers
             return CreatedAtAction("GetDoctors", new { id = doctors.Id }, doctors);
         }
 
-        // DELETE: api/Doctors/5
+        // DELETE: api/Doctores/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteDoctors(int id)
         {

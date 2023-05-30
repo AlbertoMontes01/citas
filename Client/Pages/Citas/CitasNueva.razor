@@ -1,0 +1,80 @@
+﻿@page "/citas/nuevo"
+@inject IJSRuntime JSRuntime
+@using citas.Shared.Model
+@inject HttpClient http
+@inject NavigationManager navegar
+
+<h3>Nueva Cita</h3>
+
+<EditForm Model="laCita" OnValidSubmit="Guardar">
+    <DataAnnotationsValidator />
+
+    <div class="mb-3">
+        <label for="txtFecha" class="form-label">Fecha</label>
+        <InputDate id="txtFecha" class="form-control" @bind-Value="laCita.Date" />
+        <ValidationMessage For="()=>laCita.Date" />
+    </div>
+
+    <div class="mb-3">
+        <label for="txtPacientId" class="form-label">PacientId</label>
+        <InputSelect id="txtPacienteId" class="form-control" @bind-Value="laCita.PacientId">
+            <option value="">Seleccione un paciente</option>
+            @foreach (var paciente in listaPac)
+            {
+                <option value="@paciente.Id">@paciente.Nombre</option>
+            }
+        </InputSelect>
+        <ValidationMessage For="(()=>laCita.PacientId)" />
+    </div>
+
+    <div class="mb-3">
+        <label for="txtDoctorId" class="form-label">DoctorId</label>
+        <InputSelect id="txtDoctorId" class="form-control" @bind-Value="laCita.DoctorId">
+            <option value="">Seleccione un doctor</option>
+            @foreach (var doctor in listaDoc)
+            {
+                <option value="@doctor.Id">@doctor.Nombre</option>
+            }
+        </InputSelect>
+        <ValidationMessage For="(()=>laCita.DoctorId)" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Guardar</button>
+</EditForm>
+
+@code {
+    private Appoitment laCita = new Appoitment();
+    private List<Doctors> listaDoc = new List<Doctors>();
+    private List<Pacient> listaPac = new List<Pacient>();
+    private List<Appoitment> citasProgramadas = new List<Appoitment>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Obtener la lista de pacientes y doctores desde el servidor
+        listaDoc = await http.GetFromJsonAsync<List<Doctors>>("api/doctores");
+        listaPac = await http.GetFromJsonAsync<List<Pacient>>("api/pacientes");    
+        citasProgramadas = await http.GetFromJsonAsync<List<Appoitment>>("api/citas");
+    }
+
+    private async Task Guardar()
+    {
+        // Verificar si la fecha ya está repetida en otro registro
+        bool fechaRepetida = citasProgramadas.Any(c => c.Date.Date == laCita.Date.Date);
+
+        if (fechaRepetida)
+        {
+            // Mostrar un mensaje de error o realizar alguna acción apropiada
+            // por ejemplo, mostrar un mensaje de error en la interfaz de usuario
+            // o lanzar una excepción y manejarla en otro lugar.
+            // Aquí se muestra un mensaje de alerta en la página.
+            await JSRuntime.InvokeVoidAsync("alert", "La fecha ya está registrada en otro turno.");
+        }
+        else
+        {
+            // La fecha no está repetida, se puede proceder a guardar la cita
+            await http.PostAsJsonAsync("api/citas", laCita);
+            navegar.NavigateTo("/citas");
+        }
+    }
+
+}

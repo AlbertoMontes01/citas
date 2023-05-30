@@ -1,0 +1,64 @@
+﻿@page "/citas/editar/{Id:int}"
+@using citas.Shared.Model
+@inject HttpClient http
+@inject NavigationManager navegar
+
+<h3>Editar la cita</h3>
+
+<EditForm Model="laCita" OnValidSubmit="Guardar">
+    <DataAnnotationsValidator />
+
+    <div class="mb-3">
+        <label for="txtFecha" class="form-label">Fecha</label>
+        <InputDate id="txtFecha" class="form-control" @bind-Value="laCita.Date" />
+        <ValidationMessage For="()=>laCita.Date" />
+    </div>
+
+    <div class="mb-3">
+        <label for="txtPacientId" class="form-label">Paciente</label>
+        <InputSelect id="txtPacientId" class="form-control" @bind-Value="laCita.PacientId">
+            <option value="">Seleccione un paciente</option>
+            @foreach (var paciente in listaPac)
+            {
+                <option value="@paciente.Id">@paciente.Nombre</option>
+            }
+        </InputSelect>
+        <ValidationMessage For="()=>laCita.PacientId" />
+    </div>
+
+    <div class="mb-3">
+        <label for="txtDoctorId" class="form-label">Doctor</label>
+        <InputSelect id="txtDoctorId" class="form-control" @bind-Value="laCita.DoctorId">
+            <option value="">Seleccione un doctor</option>
+            @foreach (var doctor in listaDoc)
+            {
+                <option value="@doctor.Id">@doctor.Nombre</option>
+            }
+        </InputSelect>
+        <ValidationMessage For="()=>laCita.DoctorId" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Guardar</button>
+</EditForm>
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    private Appoitment laCita = new Appoitment();
+    private List<Doctors> listaDoc = new List<Doctors>();
+    private List<Pacient> listaPac = new List<Pacient>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        laCita = await http.GetFromJsonAsync<Appoitment>($"api/citas/{Id}");
+        listaDoc = await http.GetFromJsonAsync<List<Doctors>>("api/doctores");
+        listaPac = await http.GetFromJsonAsync<List<Pacient>>("api/pacientes");
+    }
+
+    private async Task Guardar()
+    {
+        await http.PutAsJsonAsync($"api/citas/{Id}", laCita);
+        navegar.NavigateTo("/citas");
+    }
+}

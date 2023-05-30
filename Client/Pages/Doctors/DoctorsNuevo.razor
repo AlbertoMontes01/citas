@@ -1,0 +1,51 @@
+﻿@page "/doctors/nuevo"
+@using citas.Shared.Model;
+@inject HttpClient http
+@inject NavigationManager navegar
+<h3>Nuevo Doctor</h3>
+
+<EditForm Model="elCliente" OnValidSubmit="Guardar">
+
+    <DataAnnotationsValidator />
+    <div class="mb-3">
+    <label for="txtNombre" class="form-label">Nombre</label>
+    <InputText id="txtNombre" class="form-control" @bind-Value="elCliente.Nombre"/>
+    <ValidationMessage For="(()=>elCliente.Nombre)"/>
+</div>
+
+    <div class="mb-3">
+    <label for="txtSpeciality" class="form-label">Especialidad</label>
+    <InputText id="txtSpeciality" class="form-control" @bind-Value="elCliente.Speciality"/>
+    <ValidationMessage For="(()=>elCliente.Speciality)"/>
+</div>
+
+    <div class="mb-3">
+        <label for="txtDomicilio" class="form-label">Domicilio</label>
+        <InputText id="txtomicilio" class="form-control" @bind-Value="elCliente.Domicilio" />
+        <ValidationMessage For="(()=>elCliente.Domicilio)" />
+    </div>
+
+    <div class="mb-3">
+    <label for="txtPhone" class="form-label">Telefono</label>
+    <InputText id="txtPhone" class="form-control" @bind-Value="elCliente.Phone"/>
+    <ValidationMessage For="(()=>elCliente.Phone)"/>
+</div>
+
+    <div class="mb-3">
+    <label for="txtCorreo" class="form-label">Correo</label>
+    <InputText id="txtCorreo" class="form-control" @bind-Value="elCliente.Correo"/>
+    <ValidationMessage For="(()=>elCliente.Correo)"/>
+</div>
+
+    <button type="submit" class="btn btn-primary">Guardar</button>
+
+</EditForm>
+
+@code {
+    private Doctors elCliente = new Doctors();
+    private async void Guardar()
+    {
+        await http.PostAsJsonAsync("api/doctores", elCliente);
+        navegar.NavigateTo("/doctors");
+    }
+}

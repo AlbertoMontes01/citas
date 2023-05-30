@@ -12,16 +12,16 @@ namespace citas.Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class PacientsController : ControllerBase
+    public class PacientesController : ControllerBase
     {
-        private readonly PacientContext _context;
+        private readonly ClinicaContexto _context;
 
-        public PacientsController(PacientContext context)
+        public PacientesController(ClinicaContexto context)
         {
             _context = context;
         }
 
-        // GET: api/Pacients
+        // GET: api/Pacientes
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Pacient>>> GetPacients()
         {
@@ -32,7 +32,7 @@ namespace citas.Server.Controllers
             return await _context.Pacients.ToListAsync();
         }
 
-        // GET: api/Pacients/5
+        // GET: api/Pacientes/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Pacient>> GetPacient(int id)
         {
@@ -50,7 +50,7 @@ namespace citas.Server.Controllers
             return pacient;
         }
 
-        // PUT: api/Pacients/5
+        // PUT: api/Pacientes/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutPacient(int id, Pacient pacient)
@@ -81,14 +81,14 @@ namespace citas.Server.Controllers
             return NoContent();
         }
 
-        // POST: api/Pacients
+        // POST: api/Pacientes
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<Pacient>> PostPacient(Pacient pacient)
         {
           if (_context.Pacients == null)
           {
-              return Problem("Entity set 'PacientContext.Pacients'  is null.");
+              return Problem("Entity set 'ClinicaContexto.Pacients'  is null.");
           }
             _context.Pacients.Add(pacient);
             await _context.SaveChangesAsync();
@@ -96,7 +96,7 @@ namespace citas.Server.Controllers
             return CreatedAtAction("GetPacient", new { id = pacient.Id }, pacient);
         }
 
-        // DELETE: api/Pacients/5
+        // DELETE: api/Pacientes/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeletePacient(int id)
         {

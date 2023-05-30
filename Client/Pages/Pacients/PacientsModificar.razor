@@ -1,0 +1,57 @@
+﻿@page "/pacients/editar/{Id:int}"
+@using citas.Shared.Model;
+@inject HttpClient http
+@inject NavigationManager navegar
+<h3>Editar Paciente</h3>
+
+<EditForm Model="elPaciente" OnValidSubmit="Guardar">
+
+    <DataAnnotationsValidator />
+    <div class="mb-3">
+        <label for="txtNombre" class="form-label">Nombre</label>
+        <InputText id="txtNombre" class="form-control" @bind-Value="elPaciente.Nombre" />
+        <ValidationMessage For="(()=>elPaciente.Nombre)" />
+    </div>
+
+    <div class="mb-3">
+        <label for="txtBorn" class="form-label">FechaNacimiento</label>
+        <InputDate id="txtBorn" class="form-control" @bind-Value="elPaciente.Born" />
+        <ValidationMessage For="(()=>elPaciente.Born)" />
+    </div>
+
+    <div class="mb-3">
+        <label for="txtDomicilio" class="form-label">Domicilio</label>
+        <InputText id="txtomicilio" class="form-control" @bind-Value="elPaciente.Domicilio" />
+        <ValidationMessage For="(()=>elPaciente.Domicilio)" />
+    </div>
+
+    <div class="mb-3">
+        <label for="txtPhone" class="form-label">Telefono</label>
+        <InputText id="txtPhone" class="form-control" @bind-Value="elPaciente.Phone" />
+        <ValidationMessage For="(()=>elPaciente.Phone)" />
+    </div>
+
+    <div class="mb-3">
+        <label for="txtCorreo" class="form-label">Correo</label>
+        <InputText id="txtCorreo" class="form-control" @bind-Value="elPaciente.Correo" />
+        <ValidationMessage For="(()=>elPaciente.Correo)" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Guardar</button>
+
+</EditForm>
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+    private Pacient elPaciente = new Pacient();
+    protected override async Task OnInitializedAsync()
+    {
+        elPaciente = await http.GetFromJsonAsync<Pacient>($"api/pacientes/{Id}");
+    }
+    private async void Guardar()
+    {
+        await http.PutAsJsonAsync($"api/pacientes/{Id}", elPaciente);
+        navegar.NavigateTo("/pacients");
+    }
+}

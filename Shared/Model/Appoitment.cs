@@ -15,9 +15,9 @@ namespace citas.Shared.Model
         public DateTime Date { get; set; }
 
         public int PacientId { get; set; }
-        public virtual ICollection <Pacient>? Pacients { get; set; }
+        public virtual Pacient? Pacient { get; set; }
         
         public int DoctorId { get; set; }
-        public virtual ICollection <Doctors>? Doctors { get; set; }
+        public virtual Doctors? Doctor { get; set; }
     }
 }

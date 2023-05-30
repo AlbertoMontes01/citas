@@ -1,0 +1,68 @@
+﻿@page "/citas"
+@using citas.Shared.Model
+@inject HttpClient http
+@inject NavigationManager navegar
+<h3>Lists de Citas</h3>
+<button class="btn btn-primary" @onclick="Agregar"><span class="oi oi-plus"></span> Nueva cita</button>
+@if (lasCitas == null)
+{
+    <h1>Cargando datos...</h1>
+}
+else if (lasCitas.Count == 0)
+{
+    <h1>No existen citas registradas</h1>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Date</th>
+                <th>PacientId</th>
+                <th>DoctorId</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var elcliente in lasCitas)
+            {
+                <tr>
+                    <td>@elcliente.Id</td>
+                    <td>@elcliente.Date</td>
+                    <td>@elcliente.PacientId</td>
+                    <td>@elcliente.DoctorId</td>
+                    <td>
+                        <button class="btn-sm btn-primary" @onclick="(()=>Modificar(elcliente.Id))"><span class="oi oi-pencil"></span></button>
+                        <button class="btn-sm btn-danger" @onclick="(()=>Eliminar(elcliente))"><span class="oi oi-trash"></span></button>
+                    </td>
+
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+@code {
+    private List<Appoitment> lasCitas;
+    protected override async Task OnInitializedAsync()
+    {
+        lasCitas = await http.GetFromJsonAsync<List<Appoitment>>("api/citas");
+    }
+
+    private void Agregar()
+    {
+        navegar.NavigateTo("/citas/nuevo");
+    }
+
+    private void Modificar(int id)
+    {
+        navegar.NavigateTo($"/citas/editar/{id}");
+    }
+
+    private async Task Eliminar(Appoitment unCliente)
+    {
+        await http.DeleteAsync($"api/citas/{unCliente.Id}");
+        lasCitas.Remove(unCliente);
+    }
+  
+}

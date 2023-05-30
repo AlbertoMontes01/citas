@@ -3,26 +3,24 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using citas.Server.Data;
 
 #nullable disable
 
-namespace citas.Server.Migrations.Appointment
+namespace citas.Server.Migrations
 {
-    [DbContext(typeof(AppointmentContext))]
-    [Migration("20230521032442_two_tables")]
-    partial class two_tables
+    [DbContext(typeof(ClinicaContexto))]
+    partial class ClinicaContextoModelSnapshot : ModelSnapshot
     {
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.16")
+                .HasAnnotation("ProductVersion", "7.0.5")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
+            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
             modelBuilder.Entity("citas.Shared.Model.Appoitment", b =>
                 {
@@ -30,12 +28,22 @@ namespace citas.Server.Migrations.Appointment
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("DoctorId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PacientId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("DoctorId");
+
+                    b.HasIndex("PacientId");
 
                     b.ToTable("Appoitments");
                 });
@@ -46,10 +54,7 @@ namespace citas.Server.Migrations.Appointment
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<int?>("AppoitmentId")
-                        .HasColumnType("int");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Correo")
                         .IsRequired()
@@ -72,8 +77,6 @@ namespace citas.Server.Migrations.Appointment
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AppoitmentId");
-
                     b.ToTable("Doctors");
                 });
 
@@ -83,12 +86,10 @@ namespace citas.Server.Migrations.Appointment
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("AppoitmentId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("Born")
+                    b.Property<DateTime?>("Born")
+                        .IsRequired()
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Correo")
@@ -108,30 +109,36 @@ namespace citas.Server.Migrations.Appointment
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AppoitmentId");
-
                     b.ToTable("Pacients");
-                });
-
-            modelBuilder.Entity("citas.Shared.Model.Doctors", b =>
-                {
-                    b.HasOne("citas.Shared.Model.Appoitment", null)
-                        .WithMany("Doctors")
-                        .HasForeignKey("AppoitmentId");
-                });
-
-            modelBuilder.Entity("citas.Shared.Model.Pacient", b =>
-                {
-                    b.HasOne("citas.Shared.Model.Appoitment", null)
-                        .WithMany("Pacients")
-                        .HasForeignKey("AppoitmentId");
                 });
 
             modelBuilder.Entity("citas.Shared.Model.Appoitment", b =>
                 {
-                    b.Navigation("Doctors");
+                    b.HasOne("citas.Shared.Model.Doctors", "Doctor")
+                        .WithMany("Appoitments")
+                        .HasForeignKey("DoctorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Navigation("Pacients");
+                    b.HasOne("citas.Shared.Model.Pacient", "Pacient")
+                        .WithMany("Appoitments")
+                        .HasForeignKey("PacientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Doctor");
+
+                    b.Navigation("Pacient");
+                });
+
+            modelBuilder.Entity("citas.Shared.Model.Doctors", b =>
+                {
+                    b.Navigation("Appoitments");
+                });
+
+            modelBuilder.Entity("citas.Shared.Model.Pacient", b =>
+                {
+                    b.Navigation("Appoitments");
                 });
 #pragma warning restore 612, 618
         }
